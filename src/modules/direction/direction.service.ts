@@ -3,8 +3,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateDirectionDto } from './dto/create-Direction.dto';
-import { UpdateDirectionDto } from './dto/update-Direction.dto';
+import { CreateDirectionDto } from './dto/create-direction.dto';
+import { UpdateDirectionDto } from './dto/update-direction.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Direction } from './entities/course.entity';
 import { Repository } from 'typeorm';

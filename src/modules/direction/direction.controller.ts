@@ -9,8 +9,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { DirectionService } from './direction.service';
-import { CreateDirectionDto } from './dto/create-Direction.dto';
-import { UpdateDirectionDto } from './dto/update-Direction.dto';
+import { CreateDirectionDto } from './dto/create-direction.dto';
+import { UpdateDirectionDto } from './dto/update-direction.dto';
 import { FindDirectionDto } from './dto/find-direction.dto';
 
 @Controller('Direction')
