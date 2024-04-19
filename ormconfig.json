@@ -1,0 +1,10 @@
+{
+  "type": "postgres",
+  "host": "monorail.proxy.rlwy.net",
+  "port": 24090,
+  "username": "postgres",
+  "password": "eBqUBmKvkyJqbOKNxMVLjXFKeUahhaVP",
+  "database": "railway",
+  "entities": ["dist/**/*.entity{.ts,.js}"],
+  "synchronize": true
+}
