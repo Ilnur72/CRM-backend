@@ -5,16 +5,11 @@ import {
   IsDate,
   IsOptional,
   IsEnum,
-  IsNumber,
   IsPhoneNumber,
 } from 'class-validator';
-import { StudentStatus } from 'src/shared/types/enums';
+import { StaffRole } from 'src/shared/types/enums';
 
-export class CreateStudentDto {
-  @IsString()
-  @IsOptional()
-  group_id?: string;
-
+export class CreateStaffDto {
   @IsString()
   @IsNotEmpty()
   first_name: string;
@@ -23,17 +18,13 @@ export class CreateStudentDto {
   @IsNotEmpty()
   last_name: string;
 
-  @IsNumber()
-  @IsOptional()
-  balance?: number;
-
   @IsPhoneNumber()
   @IsNotEmpty()
   phone_number: string;
 
-  @IsEnum(StudentStatus)
+  @IsEnum(StaffRole)
   @IsNotEmpty()
-  status: StudentStatus;
+  role: StaffRole;
 
   @IsDate()
   @IsOptional()

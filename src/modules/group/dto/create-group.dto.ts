@@ -3,6 +3,7 @@ import {
   IsDate,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -15,8 +16,8 @@ export class CreateGroupDto {
   title: string;
 
   @IsOptional()
-  @IsUUID()
-  group_id?: string;
+  @IsNumber()
+  group_id?: number;
 
   @IsNotEmpty()
   @IsUUID()

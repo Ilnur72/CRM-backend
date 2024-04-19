@@ -25,7 +25,9 @@ export class StudentService {
     filters,
     sort = { by: 'created_at', order: SortOrder.DESC },
   }: FindStudentDto): Promise<any> {
-    const queryBuilder = this.studentRepository.createQueryBuilder('student');
+    const queryBuilder = this.studentRepository
+      .createQueryBuilder('student')
+      .leftJoinAndSelect('student.group', 'group');
 
     if (search) {
       queryBuilder.where(
@@ -49,7 +51,11 @@ export class StudentService {
   }
 
   async findOne(id: string): Promise<Student> {
-    const student = await this.studentRepository.findOne({ where: { id } });
+    const student = await this.studentRepository
+      .createQueryBuilder('student')
+      .leftJoinAndSelect('student.group', 'group')
+      .where('student.id = :id', { id })
+      .getOne();
     if (!student)
       throw new NotFoundException(`Student with ID ${id} not found`);
     return student;

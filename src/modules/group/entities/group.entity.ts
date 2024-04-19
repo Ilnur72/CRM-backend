@@ -15,11 +15,11 @@ export class Group {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ generated: 'increment' })
+  group_id: number;
+
   @Column()
   title: string;
-
-  @Column({ nullable: true })
-  group_id: string;
 
   @Column()
   direction_id: string;

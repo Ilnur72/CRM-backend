@@ -12,6 +12,11 @@ export enum GroupStatus {
   SUSPENDED = 'SUSPENDED', //ma'lum sabablarga ko'ra to'xtatilgan
 }
 
+export enum StaffRole {
+  TEACHER = 'TEACHER',
+  ADMIN = 'ADMIN',
+}
+
 export enum SortOrder {
   ASC = 'ASC',
   DESC = 'DESC',
