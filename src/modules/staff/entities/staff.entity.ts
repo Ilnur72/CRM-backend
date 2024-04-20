@@ -22,6 +22,9 @@ export class Staff {
   @Column()
   phone_number: string;
 
+  @Column({ nullable: true })
+  tg_username?: string;
+
   @Column()
   role: StaffRole;
 

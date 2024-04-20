@@ -25,6 +25,9 @@ export class Student {
   @Column()
   phone_number: string;
 
+  @Column({ nullable: true })
+  tg_username?: string;
+
   @Column({ default: 0 })
   balance: number;
 
