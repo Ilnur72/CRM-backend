@@ -34,6 +34,9 @@ export class Student {
   @Column()
   status: StudentStatus;
 
+  @Column()
+  comment?: string;
+
   @Column({ default: false })
   is_deleted: boolean;
 

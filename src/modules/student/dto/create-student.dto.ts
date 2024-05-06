@@ -39,6 +39,10 @@ export class CreateStudentDto {
   @IsNotEmpty()
   status: StudentStatus;
 
+  @IsString()
+  @IsOptional()
+  comment?: string;
+
   @IsDate()
   @IsOptional()
   created_at?: Date;
