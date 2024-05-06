@@ -11,6 +11,10 @@ import {
 import { GroupStatus } from 'src/shared/types/enums';
 
 export class CreateGroupDto {
+  @IsOptional()
+  @IsString()
+  teacher_id?: string;
+
   @IsNotEmpty()
   @IsString()
   title: string;
@@ -23,9 +27,21 @@ export class CreateGroupDto {
   @IsUUID()
   direction_id: string;
 
+  @IsOptional()
+  @IsString()
+  description?: string;
+
   @IsNotEmpty()
   @IsString()
-  description: string;
+  duration: string;
+
+  @IsNotEmpty()
+  @IsString()
+  lesson_duration: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  price: number;
 
   @IsNotEmpty()
   @IsEnum(GroupStatus)

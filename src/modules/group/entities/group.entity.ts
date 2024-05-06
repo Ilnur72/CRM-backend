@@ -1,4 +1,4 @@
-import { Direction } from 'src/modules/direction/entities/course.entity';
+import { Staff } from 'src/modules/staff/entities/staff.entity';
 import { Student } from 'src/modules/student/entities/student.entity';
 import { GroupStatus } from 'src/shared/types/enums';
 import {
@@ -15,6 +15,9 @@ export class Group {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column()
+  teacher_id: string;
+
   @Column({ generated: 'increment' })
   group_id: number;
 
@@ -22,10 +25,16 @@ export class Group {
   title: string;
 
   @Column()
-  direction_id: string;
+  description?: string;
 
   @Column()
-  description: string;
+  duration: string;
+
+  @Column()
+  lesson_duration?: string;
+
+  @Column()
+  price: number;
 
   @Column()
   status: GroupStatus;
@@ -36,9 +45,9 @@ export class Group {
   @Column({ default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 
-  @ManyToOne(() => Direction, (direction) => direction.groups)
-  @JoinColumn({ name: 'direction_id' })
-  direction: Direction;
+  @ManyToOne(() => Staff, (staff) => staff.groups)
+  @JoinColumn({ name: 'teacher_id' })
+  staff: Staff;
 
   @OneToMany(() => Student, (student) => student.group)
   students: Student[];

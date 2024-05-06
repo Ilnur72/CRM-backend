@@ -5,6 +5,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -34,7 +35,6 @@ export class Staff {
   @Column({ default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 
-  @ManyToOne(() => Group, (group) => group.students)
-  @JoinColumn({ name: 'group_id' })
-  group: Group;
+  @OneToMany(() => Group, (group) => group.staff)
+  groups: Group[];
 }
