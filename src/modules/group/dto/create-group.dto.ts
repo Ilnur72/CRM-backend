@@ -23,10 +23,6 @@ export class CreateGroupDto {
   @IsNumber()
   group_id?: number;
 
-  @IsNotEmpty()
-  @IsUUID()
-  direction_id: string;
-
   @IsOptional()
   @IsString()
   description?: string;
