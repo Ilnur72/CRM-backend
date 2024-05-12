@@ -18,6 +18,10 @@ export class CreateStaffDto {
   @IsNotEmpty()
   last_name: string;
 
+  @IsString()
+  @IsNotEmpty()
+  direction: string;
+
   @IsPhoneNumber()
   @IsNotEmpty()
   phone_number: string;

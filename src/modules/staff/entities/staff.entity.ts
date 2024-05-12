@@ -20,6 +20,9 @@ export class Staff {
   @Column()
   last_name: string;
 
+  @Column({ nullable: true })
+  direction: string;
+
   @Column()
   phone_number: string;
 

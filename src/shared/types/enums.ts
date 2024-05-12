@@ -21,3 +21,8 @@ export enum SortOrder {
   ASC = 'ASC',
   DESC = 'DESC',
 }
+
+export enum LessonDays {
+  EVEN_DAYS = 'EVEN_DAYS',
+  ODD_DAYS = 'ODD_DAYS',
+}

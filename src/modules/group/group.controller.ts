@@ -29,7 +29,7 @@ export class GroupController {
         message: 'Group Created Successfully',
       };
     } catch (error) {
-      return error.response;
+      throw error;
     }
   }
 
@@ -44,7 +44,9 @@ export class GroupController {
         message: 'Group Fetched Successfully',
       };
     } catch (error) {
-      return error.response;
+      console.log(error);
+
+      throw error;
     }
   }
 
@@ -59,7 +61,7 @@ export class GroupController {
         message: 'Group Fetched Successfully',
       };
     } catch (error) {
-      return error.response;
+      throw error;
     }
   }
 
@@ -76,7 +78,7 @@ export class GroupController {
         message: 'Group Updated Successfully',
       };
     } catch (error) {
-      return error.response;
+      throw error;
     }
   }
 
@@ -90,7 +92,7 @@ export class GroupController {
         message: 'Group Deleted Successfully',
       };
     } catch (error) {
-      return error.response;
+      throw error;
     }
   }
 }

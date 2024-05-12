@@ -15,7 +15,7 @@ export class StaffService {
   ) {}
 
   async create(createStaffDto: CreateStaffDto) {
-    const newStaff = this.staffRepository.create(createStaffDto);
+    const newStaff = await this.staffRepository.create(createStaffDto);
     return this.staffRepository.save(newStaff);
   }
 
@@ -51,7 +51,7 @@ export class StaffService {
   async findOne(id: string): Promise<Staff> {
     const staff = await this.staffRepository
       .createQueryBuilder('staff')
-      .innerJoinAndSelect('staff.groups', 'groups.title')
+      .leftJoinAndSelect('staff.groups', 'groups.title')
       .where('staff.id = :id', { id })
       .getOne();
     // const staff = await this.staffRepository.findOne({ where: { id } });

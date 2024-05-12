@@ -29,7 +29,7 @@ export class StaffController {
         message: 'Staff Created Successfully',
       };
     } catch (error) {
-      return error.response;
+      throw error;
     }
   }
 
@@ -44,7 +44,7 @@ export class StaffController {
         message: 'Staff Fetched Successfully',
       };
     } catch (error) {
-      return error.response;
+      throw error;
     }
   }
 
@@ -59,7 +59,7 @@ export class StaffController {
         message: 'Staff Fetched Successfully',
       };
     } catch (error) {
-      return error.response;
+      throw error;
     }
   }
 
@@ -76,7 +76,7 @@ export class StaffController {
         message: 'Staff Updated Successfully',
       };
     } catch (error) {
-      return error.response;
+      throw error;
     }
   }
 
@@ -90,7 +90,7 @@ export class StaffController {
         message: 'Staff Deleted Successfully',
       };
     } catch (error) {
-      return error.response;
+      throw error;
     }
   }
 }

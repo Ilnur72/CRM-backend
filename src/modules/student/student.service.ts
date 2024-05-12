@@ -6,15 +6,19 @@ import { Student } from './entities/student.entity';
 import { Repository } from 'typeorm';
 import { FindStudentDto } from './dto/find-student.dto';
 import { SortOrder } from 'src/shared/types/enums';
+import { GroupService } from '../group/group.service';
 
 @Injectable()
 export class StudentService {
   constructor(
     @InjectRepository(Student)
     private studentRepository: Repository<Student>,
+    private readonly groupService: GroupService,
   ) {}
 
   async create(createStudentDto: CreateStudentDto) {
+    await this.groupService.findOne(createStudentDto.group_id);
+
     const newStudent = this.studentRepository.create(createStudentDto);
     return this.studentRepository.save(newStudent);
   }

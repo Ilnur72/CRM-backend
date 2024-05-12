@@ -1,6 +1,6 @@
 import { Staff } from 'src/modules/staff/entities/staff.entity';
 import { Student } from 'src/modules/student/entities/student.entity';
-import { GroupStatus } from 'src/shared/types/enums';
+import { GroupStatus, LessonDays } from 'src/shared/types/enums';
 import {
   Column,
   Entity,
@@ -29,6 +29,12 @@ export class Group {
 
   @Column()
   duration: string;
+
+  @Column({ nullable: true })
+  lesson_days: LessonDays;
+
+  @Column({ nullable: true })
+  lesson_time: string;
 
   @Column()
   lesson_duration?: string;

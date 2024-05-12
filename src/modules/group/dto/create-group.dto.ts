@@ -6,9 +6,8 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  IsUUID,
 } from 'class-validator';
-import { GroupStatus } from 'src/shared/types/enums';
+import { GroupStatus, LessonDays } from 'src/shared/types/enums';
 
 export class CreateGroupDto {
   @IsOptional()
@@ -34,6 +33,14 @@ export class CreateGroupDto {
   @IsNotEmpty()
   @IsString()
   lesson_duration: string;
+
+  @IsNotEmpty()
+  @IsEnum(LessonDays)
+  lesson_days: LessonDays;
+
+  @IsString()
+  @IsNotEmpty()
+  lesson_time: '10:00';
 
   @IsNotEmpty()
   @IsNumber()

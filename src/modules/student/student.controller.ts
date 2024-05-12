@@ -29,7 +29,7 @@ export class StudentController {
         message: 'Student Created Successfully',
       };
     } catch (error) {
-      return error.response;
+      throw error;
     }
   }
 
@@ -44,7 +44,7 @@ export class StudentController {
         message: 'Student Fetched Successfully',
       };
     } catch (error) {
-      return error.response;
+      throw error;
     }
   }
 
@@ -59,7 +59,7 @@ export class StudentController {
         message: 'Student Fetched Successfully',
       };
     } catch (error) {
-      return error.response;
+      throw error;
     }
   }
 
@@ -76,7 +76,7 @@ export class StudentController {
         message: 'Student Updated Successfully',
       };
     } catch (error) {
-      return error.response;
+      throw error;
     }
   }
 
@@ -90,7 +90,7 @@ export class StudentController {
         message: 'Student Deleted Successfully',
       };
     } catch (error) {
-      return error.response;
+      throw error;
     }
   }
 }
