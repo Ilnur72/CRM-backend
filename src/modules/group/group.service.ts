@@ -12,6 +12,7 @@ import { Repository } from 'typeorm';
 import { FindGroupDto } from './dto/find-group.dto';
 import { SortOrder } from 'src/shared/types/enums';
 import { StaffService } from '../staff/staff.service';
+import { Student } from '../student/entities/student.entity';
 
 @Injectable()
 export class GroupService {
@@ -70,10 +71,17 @@ export class GroupService {
 
   async findOne(id: string) {
     try {
-      const group = await this.groupRepository.findOne({ where: { id } });
+      const group = await this.groupRepository.findOne({
+        where: { id },
+        relations: ['students'],
+      });
       if (!group) throw new NotFoundException(`Group with ID ${id} not found`);
-      return group;
+      const studentIds = group.students.map((student) => student.id);
+
+      return { ...group, students: studentIds };
     } catch (error) {
+      console.log(error);
+
       if (error instanceof NotFoundException) {
         throw error;
       }
