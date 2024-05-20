@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+  BadRequestException,
+} from '@nestjs/common';
 import { CreateStaffDto } from './dto/create-staff.dto';
 import { UpdateStaffDto } from './dto/update-staff.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,8 +20,12 @@ export class StaffService {
   ) {}
 
   async create(createStaffDto: CreateStaffDto) {
-    const newStaff = await this.staffRepository.create(createStaffDto);
-    return this.staffRepository.save(newStaff);
+    try {
+      const newStaff = this.staffRepository.create(createStaffDto);
+      return await this.staffRepository.save(newStaff);
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to create staff');
+    }
   }
 
   async findAll({
@@ -25,54 +34,84 @@ export class StaffService {
     filters,
     sort = { by: 'created_at', order: SortOrder.DESC },
   }: FindStaffDto): Promise<any> {
-    const queryBuilder = this.staffRepository.createQueryBuilder('staff');
+    try {
+      const queryBuilder = this.staffRepository.createQueryBuilder('staff');
 
-    if (search) {
-      queryBuilder.where(
-        'staff.first_name ILIKE :search OR staff.last_name ILIKE :search',
-        { search: `%${search}%` },
-      );
-    }
-    if (sort.by && sort.order) {
-      queryBuilder.orderBy(`staff.${sort.by}`, sort.order);
-    }
-    if (filters) {
-      queryBuilder.where(filters).getMany();
-    }
-    const total = await queryBuilder.getCount();
-    const data = await queryBuilder
-      .skip((page.offset - 1) * page.limit)
-      .take(page.limit)
-      .getMany();
+      if (search) {
+        queryBuilder.where(
+          'staff.first_name ILIKE :search OR staff.last_name ILIKE :search',
+          { search: `%${search}%` },
+        );
+      }
+      if (sort.by && sort.order) {
+        queryBuilder.orderBy(`staff.${sort.by}`, sort.order);
+      }
+      if (filters) {
+        queryBuilder.andWhere(filters);
+      }
+      const total = await queryBuilder.getCount();
+      const data = await queryBuilder
+        .skip((page.offset - 1) * page.limit)
+        .take(page.limit)
+        .getMany();
 
-    return { total, data, limit: page.limit, offset: page.offset };
+      return { total, data, limit: page.limit, offset: page.offset };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to fetch staff list');
+    }
   }
 
   async findOne(id: string): Promise<Staff> {
-    const staff = await this.staffRepository
-      .createQueryBuilder('staff')
-      .leftJoinAndSelect('staff.groups', 'groups.title')
-      .where('staff.id = :id', { id })
-      .getOne();
-    // const staff = await this.staffRepository.findOne({ where: { id } });
-    if (!staff) throw new NotFoundException(`Staff with ID ${id} not found`);
-    return staff;
+    try {
+      const staff = await this.staffRepository
+        .createQueryBuilder('staff')
+        .leftJoinAndSelect('staff.groups', 'groups')
+        .where('staff.id = :id', { id })
+        .getOne();
+
+      if (!staff) throw new NotFoundException(`Staff with ID ${id} not found`);
+      return staff;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to fetch staff details');
+    }
   }
 
   async update(id: string, updateStaffDto: UpdateStaffDto): Promise<Staff> {
-    const existing = await this.staffRepository.findOne({ where: { id } });
-    if (!existing) throw new NotFoundException(`Staff with ID ${id} not found`);
-    const updatedStaff = this.staffRepository.merge(existing, updateStaffDto);
-    return await this.staffRepository.save(updatedStaff);
+    try {
+      const existing = await this.staffRepository.findOne({ where: { id } });
+      if (!existing)
+        throw new NotFoundException(`Staff with ID ${id} not found`);
+      const updatedStaff = this.staffRepository.merge(existing, updateStaffDto);
+      return await this.staffRepository.save(updatedStaff);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to update staff');
+    }
   }
 
   async remove(id: string): Promise<any> {
-    const existingStaff = await this.staffRepository.findOne({
-      where: { id },
-    });
-    if (!existingStaff) {
-      throw new NotFoundException(`Staff with ID ${id} not found`);
+    try {
+      const existingStaff = await this.staffRepository.findOne({
+        where: { id },
+      });
+      if (!existingStaff) {
+        throw new NotFoundException(`Staff with ID ${id} not found`);
+      }
+      return await this.staffRepository.remove(existingStaff);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      } else if (error.code === '23503') {
+        throw new BadRequestException(
+          'Cannot delete staff due to related records in other tables',
+        );
+      }
+      throw new InternalServerErrorException('Failed to delete staff');
     }
-    return await this.staffRepository.remove(existingStaff);
   }
 }
