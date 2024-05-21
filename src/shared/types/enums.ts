@@ -1,8 +1,8 @@
 export enum StudentStatus {
   ATTENDING = 'ATTENDING', //o'qiyapti
   PENDING = 'PENDING', //kutilmoqda, guruhga qo'shilmagan
-  SUSPENDED = 'SUSPENDED ', //ma'lum sabablarga ko'ra to'xtailgan
-  COMPLETED = 'COMPLETED ', //muvaffaqiyatli tugatgan
+  SUSPENDED = 'SUSPENDED', //ma'lum sabablarga ko'ra to'xtailgan
+  COMPLETED = 'COMPLETED', //muvaffaqiyatli tugatgan
 }
 
 export enum GroupStatus {
