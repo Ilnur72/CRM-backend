@@ -1,13 +1,7 @@
 import { OffsetPaginationDto } from 'src/shared/dto/offset-pagination.dto';
 import { SortOrder, StudentStatus } from 'src/shared/types/enums';
 import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsEnum,
-  IsOptional,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
+import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 // ?q=first_name&page[offset]=0&page[limit]=10&sort[by]=first_name&sort[order]=asc
 export class SortStudentDto {
@@ -22,7 +16,6 @@ export class SortStudentDto {
 
 export class FilterStudentDto {
   @IsOptional()
-  @IsBoolean()
   is_deleted?: boolean;
 
   @IsOptional()

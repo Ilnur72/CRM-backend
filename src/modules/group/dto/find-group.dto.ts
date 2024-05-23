@@ -16,7 +16,7 @@ export class SortGroupDto {
 
 export class FilterGroupDto {
   @IsOptional()
-  is_deleted?: true | false | 'true' | 'false';
+  is_deleted?: boolean;
 
   @IsOptional()
   @IsEnum(GroupStatus)
