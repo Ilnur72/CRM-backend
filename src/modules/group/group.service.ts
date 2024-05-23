@@ -12,7 +12,6 @@ import { Repository } from 'typeorm';
 import { FindGroupDto } from './dto/find-group.dto';
 import { GroupStatus, SortOrder } from 'src/shared/types/enums';
 import { StaffService } from '../staff/staff.service';
-import { Student } from '../student/entities/student.entity';
 
 @Injectable()
 export class GroupService {
