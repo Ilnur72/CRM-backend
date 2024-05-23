@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Group } from './entities/group.entity';
 import { Repository } from 'typeorm';
 import { FindGroupDto } from './dto/find-group.dto';
-import { SortOrder } from 'src/shared/types/enums';
+import { GroupStatus, SortOrder } from 'src/shared/types/enums';
 import { StaffService } from '../staff/staff.service';
 import { Student } from '../student/entities/student.entity';
 
@@ -40,7 +40,7 @@ export class GroupService {
   async findAll({
     page = { limit: 2, offset: 1 },
     search,
-    filters,
+    filters = { is_deleted: false },
     sort = { by: 'created_at', order: SortOrder.DESC },
   }: FindGroupDto) {
     try {
@@ -72,16 +72,17 @@ export class GroupService {
   async findOne(id: string) {
     try {
       const group = await this.groupRepository.findOne({
-        where: { id },
+        where: { id, is_deleted: false },
         relations: ['students'],
       });
+      group.students = group.students.filter(
+        (student) => student.is_deleted === false,
+      );
       if (!group) throw new NotFoundException(`Group with ID ${id} not found`);
       const studentIds = group.students.map((student) => student.id);
 
       return { ...group, students: studentIds };
     } catch (error) {
-      console.log(error);
-
       if (error instanceof NotFoundException) {
         throw error;
       }
@@ -91,7 +92,9 @@ export class GroupService {
 
   async update(id: string, updateGroupDto: UpdateGroupDto) {
     try {
-      const existing = await this.groupRepository.findOne({ where: { id } });
+      const existing = await this.groupRepository.findOne({
+        where: { id, is_deleted: false },
+      });
       if (!existing)
         throw new NotFoundException(`Group with ID ${id} not found`);
       const updateGroup = this.groupRepository.merge(existing, updateGroupDto);
@@ -107,17 +110,20 @@ export class GroupService {
   async remove(id: string) {
     try {
       const existingGroup = await this.groupRepository.findOne({
-        where: { id },
+        where: { id, is_deleted: false },
       });
       if (!existingGroup) {
         throw new NotFoundException(`Group with ID ${id} not found`);
       }
-      return await this.groupRepository.remove(existingGroup);
+      const deleteGroup = this.groupRepository.merge(existingGroup, {
+        is_deleted: true,
+        status: GroupStatus.SUSPENDED,
+      });
+      await this.groupRepository.save(deleteGroup);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
       } else if (error.code === '23503') {
-        // Foreign key constraint violation code
         throw new BadRequestException(
           'Cannot delete group due to related records in other tables',
         );

@@ -31,26 +31,26 @@ export class StaffService {
   async findAll({
     page = { limit: 2, offset: 1 },
     search,
-    filters,
+    filters = { is_deleted: false },
     sort = { by: 'created_at', order: SortOrder.DESC },
   }: FindStaffDto): Promise<any> {
     try {
-      const queryBuilder = this.staffRepository.createQueryBuilder('staff');
+      const existing = this.staffRepository.createQueryBuilder('staff');
 
       if (search) {
-        queryBuilder.where(
+        existing.where(
           'staff.first_name ILIKE :search OR staff.last_name ILIKE :search',
           { search: `%${search}%` },
         );
       }
       if (sort.by && sort.order) {
-        queryBuilder.orderBy(`staff.${sort.by}`, sort.order);
+        existing.orderBy(`staff.${sort.by}`, sort.order);
       }
       if (filters) {
-        queryBuilder.andWhere(filters);
+        existing.andWhere(filters);
       }
-      const total = await queryBuilder.getCount();
-      const data = await queryBuilder
+      const total = await existing.getCount();
+      const data = await existing
         .skip((page.offset - 1) * page.limit)
         .take(page.limit)
         .getMany();
@@ -61,17 +61,25 @@ export class StaffService {
     }
   }
 
-  async findOne(id: string): Promise<Staff> {
+  async findOne(id: string): Promise<any> {
     try {
-      const staff = await this.staffRepository
-        .createQueryBuilder('staff')
-        .leftJoinAndSelect('staff.groups', 'groups')
-        .where('staff.id = :id', { id })
-        .getOne();
+      const existing = await this.staffRepository.findOne({
+        where: { id, is_deleted: false },
+        relations: ['groups'],
+      });
+      existing.groups = existing.groups.filter(
+        (group) => group.is_deleted == false,
+      );
 
-      if (!staff) throw new NotFoundException(`Staff with ID ${id} not found`);
-      return staff;
+      if (!existing)
+        throw new NotFoundException(`Staff with ID ${id} not found`);
+      if (existing.groups.length == 1 && existing.groups[0].is_deleted)
+        existing.groups = null;
+
+      return existing;
     } catch (error) {
+      console.log(error);
+
       if (error instanceof NotFoundException) {
         throw error;
       }
@@ -81,7 +89,9 @@ export class StaffService {
 
   async update(id: string, updateStaffDto: UpdateStaffDto): Promise<Staff> {
     try {
-      const existing = await this.staffRepository.findOne({ where: { id } });
+      const existing = await this.staffRepository.findOne({
+        where: { id, is_deleted: false },
+      });
       if (!existing)
         throw new NotFoundException(`Staff with ID ${id} not found`);
       const updatedStaff = this.staffRepository.merge(existing, updateStaffDto);
@@ -96,13 +106,16 @@ export class StaffService {
 
   async remove(id: string): Promise<any> {
     try {
-      const existingStaff = await this.staffRepository.findOne({
-        where: { id },
+      const existing = await this.staffRepository.findOne({
+        where: { id, is_deleted: false },
       });
-      if (!existingStaff) {
+      if (!existing) {
         throw new NotFoundException(`Staff with ID ${id} not found`);
       }
-      return await this.staffRepository.remove(existingStaff);
+      const staff = this.staffRepository.merge(existing, {
+        is_deleted: true,
+      });
+      await this.staffRepository.save(staff);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;

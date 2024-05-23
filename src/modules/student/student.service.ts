@@ -69,14 +69,15 @@ export class StudentService {
 
   async findOne(id: string): Promise<Student> {
     try {
-      const student = await this.studentRepository
-        .createQueryBuilder('student')
-        .leftJoinAndSelect('student.group', 'group')
-        .where('student.id = :id', { id })
-        .getOne();
-      if (!student)
+      const existing = await this.studentRepository.findOne({
+        where: { id, is_deleted: false },
+        relations: ['group'],
+      });
+      if (!existing)
         throw new NotFoundException(`Student with ID ${id} not found`);
-      return student;
+
+      if (existing.group && existing.group.is_deleted) existing.group = null;
+      return existing;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -90,7 +91,9 @@ export class StudentService {
     updateStudentDto: UpdateStudentDto,
   ): Promise<Student> {
     try {
-      const existing = await this.studentRepository.findOne({ where: { id } });
+      const existing = await this.studentRepository.findOne({
+        where: { id, is_deleted: false },
+      });
       if (!existing)
         throw new NotFoundException(`Student with ID ${id} not found`);
       const updatedStudent = this.studentRepository.merge(
@@ -108,13 +111,16 @@ export class StudentService {
 
   async remove(id: string): Promise<any> {
     try {
-      const existingStudent = await this.studentRepository.findOne({
-        where: { id },
+      const existing = await this.studentRepository.findOne({
+        where: { id, is_deleted: false },
       });
-      if (!existingStudent) {
+      if (!existing) {
         throw new NotFoundException(`Student with ID ${id} not found`);
       }
-      return await this.studentRepository.remove(existingStudent);
+      const student = this.studentRepository.merge(existing, {
+        is_deleted: true,
+      });
+      await this.studentRepository.save(student);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;

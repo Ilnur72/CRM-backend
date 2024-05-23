@@ -1,13 +1,6 @@
 import { Group } from 'src/modules/group/entities/group.entity';
 import { StaffRole } from 'src/shared/types/enums';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Staff {
