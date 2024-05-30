@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { IsDurationValid } from 'src/shared/decorators/is-duration-valid.decorator';
 import { GroupStatus, LessonDays } from 'src/shared/types/enums';
 
 export class CreateGroupDto {
@@ -27,7 +28,7 @@ export class CreateGroupDto {
   description?: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsDurationValid()
   duration: string;
 
   @IsNotEmpty()
@@ -57,4 +58,8 @@ export class CreateGroupDto {
   @IsOptional()
   @IsDate()
   created_at?: Date;
+
+  @IsOptional()
+  @IsString()
+  ends_at?: string;
 }

@@ -51,6 +51,9 @@ export class Group {
   @Column({ default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 
+  @Column({ nullable: true })
+  ends_at: Date;
+
   @ManyToOne(() => Staff, (staff) => staff.groups)
   @JoinColumn({ name: 'teacher_id' })
   staff: Staff;

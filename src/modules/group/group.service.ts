@@ -23,7 +23,14 @@ export class GroupService {
   async create(createGroupDto: CreateGroupDto) {
     try {
       await this.staffService.findOne(createGroupDto.teacher_id);
-
+      if (createGroupDto.status === GroupStatus.ACTIVE) {
+        const date = new Date();
+        date.setMonth(date.getMonth() + parseInt(createGroupDto.duration, 10));
+        createGroupDto.ends_at = date
+          .toISOString()
+          .slice(0, 19)
+          .replace('T', ' ');
+      }
       const newGroup = this.groupRepository.create(createGroupDto);
       return await this.groupRepository.save(newGroup);
     } catch (error) {
@@ -71,13 +78,13 @@ export class GroupService {
   async findOne(id: string) {
     try {
       const group = await this.groupRepository.findOne({
-        where: { id, is_deleted: false },
+        where: { id },
         relations: ['students'],
       });
+      if (!group) throw new NotFoundException(`Group with ID ${id} not found`);
       group.students = group.students.filter(
         (student) => student.is_deleted === false,
       );
-      if (!group) throw new NotFoundException(`Group with ID ${id} not found`);
       const studentIds = group.students.map((student) => student.id);
 
       return { ...group, students: studentIds };
@@ -96,6 +103,14 @@ export class GroupService {
       });
       if (!existing)
         throw new NotFoundException(`Group with ID ${id} not found`);
+      if (updateGroupDto.status === GroupStatus.ACTIVE) {
+        const date = new Date(existing.created_at);
+        date.setMonth(date.getMonth() + parseInt(existing.duration, 10));
+        updateGroupDto.ends_at = date
+          .toISOString()
+          .slice(0, 19)
+          .replace('T', ' ');
+      }
       const updateGroup = this.groupRepository.merge(existing, updateGroupDto);
       return await this.groupRepository.save(updateGroup);
     } catch (error) {

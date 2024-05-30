@@ -70,7 +70,7 @@ export class StudentService {
   async findOne(id: string): Promise<Student> {
     try {
       const existing = await this.studentRepository.findOne({
-        where: { id, is_deleted: false },
+        where: { id },
         relations: ['group'],
       });
       if (!existing)

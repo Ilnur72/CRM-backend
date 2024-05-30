@@ -64,15 +64,15 @@ export class StaffService {
   async findOne(id: string): Promise<any> {
     try {
       const existing = await this.staffRepository.findOne({
-        where: { id, is_deleted: false },
+        where: { id },
         relations: ['groups'],
       });
+      if (!existing)
+        throw new NotFoundException(`Staff with ID ${id} not found`);
       existing.groups = existing.groups.filter(
         (group) => group.is_deleted == false,
       );
 
-      if (!existing)
-        throw new NotFoundException(`Staff with ID ${id} not found`);
       if (existing.groups.length == 1 && existing.groups[0].is_deleted)
         existing.groups = null;
 
